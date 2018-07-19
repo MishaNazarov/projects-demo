@@ -1,0 +1,15 @@
+version: '2'
+services:
+  intercom-frontend:
+    restart: "always"
+    build: "."
+    ports:
+     - "80:80/tcp"
+     - "443:443/tcp"
+    volumes:
+     - /etc/letsencrypt:/etc/letsencrypt
+
+networks:
+  default:
+    external:
+      name: intercom-network

@@ -1,0 +1,121 @@
+<app-client-selector title="Claims"></app-client-selector>
+<div class="dialog-wrapper claims-wrapper">
+
+  <div class="form-field pageable-combobox-field">
+    <label>Pharmacy</label>
+    <app-pageable-combobox [data]="pharmaciesList$ | async" textField="PharmacyName" valueField="IDClientPharmacy" [loading]="pharmaciesLoading"
+      [total]="pharmaciesTotal" [notForm]="true" (selectEvent)="pharmacyOnSelect($event)" [value]="gridConfiguration.filter.IDClientPharmacy"
+      (loadEvent)="loadPharmacies($event)" placeholder="Choose a pharmacy">
+    </app-pageable-combobox>
+  </div>
+
+  <div class="form-field-group">
+
+    <div class="form-field input-field-md">
+      <label>Rx Number</label>
+      <input class="k-textbox" [(ngModel)]="gridConfiguration.filter.PrescriptionRefNo" />
+    </div>
+
+    <div class="form-field">
+      <label>Date From/To</label>
+      <div class="range-calendar-picker">
+        <my-date-range-picker [options]="dateRangePickerOptions" [(ngModel)]="gridConfiguration.filter.DateRange">
+        </my-date-range-picker>        
+      </div>
+    </div>
+
+    <div class="form-checkbox-field form-check-field">
+      <label class="container">Auto reprocessed
+        <input type="checkbox" [(ngModel)]="gridConfiguration.filter.AutoReprocessed">
+        <span class="checkmark"></span>
+      </label>
+    </div>
+
+    <div class="form-field">
+      <label>Reprocess Date From/To</label>
+      <div class="range-calendar-picker">
+        <my-date-range-picker [options]="dateRangePickerOptions" [(ngModel)]="gridConfiguration.filter.ReprocessDateRange"></my-date-range-picker>
+      </div>
+    </div>
+
+    <button kendoButton [primary]="true" class="k-primary-md" (click)="loadClaims()">
+      Search
+    </button>
+
+  </div>
+
+  <kendo-grid [data]="claimsList" [pageSize]="gridConfiguration.take" [skip]="gridConfiguration.skip" scrollable="none"
+    [pageable]="pageable" (pageChange)="pageChange($event)">
+    <kendo-grid-column field="TimeStamp" title="Time Stamp" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.TimeStamp | momentUtc }}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Rx Number" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.PrescriptionRefNo}}{{dataItem.TransactionResponseStatus}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="ProductServiceID" title="NDC" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="CardholderID" title="Cardholder ID" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="PatientDOB" title="DOB" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.PatientDOB | date:'M/d/yyyy' }}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="DateOfService" title="Claim Date" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.DateOfService | date:'M/d/yyyy' }}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="ThirdParty" title="Third Party" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.ThirdParty ? 'YES' : 'NO'}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="Inventory" title="Only Inv." [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{dataItem.Inventory ? 'YES' : 'NO'}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="AccountTypeVI" title="Last Account" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="Action" title="Include/Exclude" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <kendo-combobox [(ngModel)]="dataItem.Action" valuePrimitive="true" [data]="dataItem.AvailableActions" textField="Text" valueField="Action">
+        </kendo-combobox>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="ReducedAdminFee" title="Admin Fee/Rev.Reduct." [sortable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <ng-container *ngIf="dataItem.ReducedAdminFee >= 0">
+          YES ({{dataItem.ReducedAdminFee | currency:'USD':'symbol'}})
+        </ng-container>
+        <ng-container *ngIf="dataItem.ReducedAdminFee == null">NO</ng-container>
+      </ng-template>
+    </kendo-grid-column>
+    <ng-template kendoGridNoRecordsTemplate>
+      <app-loading-panel *ngIf="loading"></app-loading-panel>
+    </ng-template>
+  </kendo-grid>
+
+  <div class="form-field-group description-group">
+    <div class="links">
+      <div class="text-btn download" (click)="download()" *ngIf="!downloading">Download</div>
+      <span *ngIf="downloading">Downloading claims..</span>
+      <div class="file-upload" (change)="upload($event)" *ngIf="!uploading">
+        <label>
+          <input type="file" name="file">
+          <span class="upload-icon"></span>
+          <span>Upload Overrides Batch</span>
+        </label>
+      </div>
+      <span *ngIf="uploading">Uploading claims..</span>
+    </div>
+
+    <button *ngIf="!applyingOverrides" kendoButton (click)="applyOverrides()" [primary]="true" look="outline" class="add-outline-btn">
+      Apply Overrides
+    </button>
+    <span *ngIf="applyingOverrides">Processing claims..</span>
+  </div>
+
+</div>
