@@ -1,0 +1,142 @@
+@import '~styles/definitions.scss';
+
+.options-panel {
+  width: 100%;
+  border-radius: $border-radius;
+  // border-top-left-radius: $border-radius;
+  // border-top-right-radius: $border-radius;
+  height: auto;
+  overflow: hidden;
+  background: $options-panel-background;
+
+  &:not(:last-of-type) {
+    margin-bottom: 0.7rem;
+  }
+
+  &__header {
+    border-radius: $border-radius;
+    background-color: $white-color;
+    cursor: pointer;
+
+    &__group {
+      margin-right: 0.5rem;
+    }
+
+    &__name {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &__inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      margin-left: 0.5rem;
+      margin-right: auto;
+      max-width: 255px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      h4 {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin: 0 0 0.125rem;
+      }
+    }
+  }
+}
+
+.item__status-icon {
+  margin-right: 0.5rem;
+  font-size: 2rem;
+  color: $orange-color-main;
+  display: block;
+}
+
+.options-list {
+  color: $white-color;
+  padding: 0.75rem 0;
+  width: 100%;
+
+  &__separator {
+    display: flex;
+    position: relative;
+    margin: 0.25rem 0;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 2.5%;
+      width: 95%;
+      border-top: solid 1px transparentize($white-color, 0.5);
+    }
+  }
+
+  &__separator.options-list__item {
+    margin-top: 0.5rem;
+    &:before {
+      top: -5px;
+    }
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.25rem;
+    letter-spacing: 0.75px;
+    text-align: left;
+    padding: 1rem 2rem;
+    transition: background 1s ease-out;
+
+    &:not(.disabled) {
+      cursor: pointer;
+
+      &:hover {
+        background: transparentize($white-color, 0.7);
+      }
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .modified_option {
+    padding: 0.8rem 2rem;
+    height: 60px;
+  }
+
+  &__arrow {
+    width: 16px;
+    height: 26px;
+    transition: opacity 0.7s;
+    opacity: 0;
+
+    &-active {
+      opacity: 1;
+    }
+  }
+}
+
+.item-prompt {
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-left: 5px;
+  margin-bottom: 20px;
+}
+
+@media screen and (min-height: 768px) {
+  .options-panel__header__content {
+    max-width: 285px;
+  }
+}
